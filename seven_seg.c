@@ -35,16 +35,15 @@ FILE* dio = NULL;
 
 void writeDIO(int v) {
     /*Write the GPIO file*/
+    dio = fopen("sys/class/gpio/gpio24/value", "w");
+    fprintf(dio,"%d", v);
+    fclose(dio);
 }
 void writeCLK(int v) {
     /*Write the GPIO file*/
     clk = fopen("/sys/class/gpio/gpio25/value", "w");
     fprintf(clk, "%d", v);
     fclose(clk);
-    
-    dio = fopen("sys/class/gpio/gpio24/value", "w");
-    fprintf(dio,"%d", v);
-    fclose(dio);
 }
 
 void initialize(){  
@@ -151,13 +150,12 @@ void showNum(int num) {
 }
 
 void clear() {
-
-        int mode[8] = {0,0,0,0,0,0,0,0};
+	int mode[8] = AUTO_MODE;
         int addr[8] = START_ADDR;
         int bright[8] = DEFAULT_BRIGHTNESS;
 
         startWrite(); 
-        writeByte(mode); //mode = {0,0,0,0,0,0,0,0} (continuous enter)
+        writeByte(mode); //mode = {0,1,0,0,0,0,0,0} (continuous enter)
         stopWrite();
 
         startWrite();
@@ -175,12 +173,16 @@ void clear() {
 int main(void)
 {
     initialize();
+    //showNum(9218);
+    //sleep(5);
+    
     int a = 1000;
     while(a>0){
     	showNum(a);
     	sleep(1);
     	a-=100;
     }
+
     clear();
    
     end();
